@@ -1,27 +1,28 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestOrderRelationships {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -35,17 +36,17 @@ public class TestOrderRelationships {
 
 		Book b = em.find(Book.class, 2L);
 		Author[] authors = b.getAuthors().toArray(new Author[3]);
-		Assert.assertEquals("Bauer", authors[0].getLastName());
-		Assert.assertEquals("Gregory", authors[1].getLastName());
-		Assert.assertEquals("King", authors[2].getLastName());
+		Assertions.assertEquals("Bauer", authors[0].getLastName());
+		Assertions.assertEquals("Gregory", authors[1].getLastName());
+		Assertions.assertEquals("King", authors[2].getLastName());
 		for (Author a : authors) {
 			log.info(a.getLastName() + ", id: " + a.getId());
 		}
-		
+
 		em.getTransaction().commit();
 		em.close();
 	}
-	
+
 	@Test
 	public void fetchBooksAndAuthors() {
 		log.info("... fetchBooksAndAuthors ...");
@@ -55,13 +56,13 @@ public class TestOrderRelationships {
 
 		Book b = em.createQuery("SELECT b FROM Book b JOIN FETCH b.authors a WHERE b.id = 2", Book.class).getSingleResult();
 		Author[] authors = b.getAuthors().toArray(new Author[3]);
-		Assert.assertEquals("Bauer", authors[0].getLastName());
-		Assert.assertEquals("Gregory", authors[1].getLastName());
-		Assert.assertEquals("King", authors[2].getLastName());
+		Assertions.assertEquals("Bauer", authors[0].getLastName());
+		Assertions.assertEquals("Gregory", authors[1].getLastName());
+		Assertions.assertEquals("King", authors[2].getLastName());
 		for (Author a : authors) {
 			log.info(a.getLastName() + ", id: " + a.getId());
 		}
-		
+
 		em.getTransaction().commit();
 		em.close();
 	}

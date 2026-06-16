@@ -2,27 +2,28 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestViewEntity {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -38,13 +39,13 @@ public class TestViewEntity {
 				.getResultList();
 
 		for (BookView bv : bvs) {
-			log.info(bv.getTitle() + " was written by "+bv.getAuthors());
+			log.info("{} was written by {}", bv.getTitle(), bv.getAuthors());
 		}
-		
+
 		em.getTransaction().commit();
 		em.close();
 	}
-	
+
 	@Test
 	public void updateView() {
 		log.info("... updateView ...");
@@ -53,18 +54,19 @@ public class TestViewEntity {
 		em.getTransaction().begin();
 
 		BookView bv = em.find(BookView.class, 1L);
-	    log.info(bv);
-	    bv.setTitle("updated");
-	     
-	    em.getTransaction().commit();
-	    em.close();
-	 
-	    em = emf.createEntityManager();
+		log.info("{}", bv);
+		// BookView is mapped to a read-only view (@Immutable); the change is ignored.
+		bv.setTitle("updated");
+
+		em.getTransaction().commit();
+		em.close();
+
+		em = emf.createEntityManager();
 		em.getTransaction().begin();
-		
-	    BookView bookupdate = em.find(BookView.class, 1L);
-	    log.info(bookupdate);  
-		
+
+		BookView bookupdate = em.find(BookView.class, 1L);
+		log.info("{}", bookupdate);
+
 		em.getTransaction().commit();
 		em.close();
 	}

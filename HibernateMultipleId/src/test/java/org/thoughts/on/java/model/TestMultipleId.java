@@ -2,30 +2,31 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.MultiIdentifierLoadAccess;
 import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestMultipleId {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -41,7 +42,7 @@ public class TestMultipleId {
 		MultiIdentifierLoadAccess<Book> multi = session.byMultipleIds(Book.class);
 		List<Book> books = multi.multiLoad(1L, 2L, 3L);
 		
-		Assert.assertEquals(3, books.size());
+		Assertions.assertEquals(3, books.size());
 
 		em.getTransaction().commit();
 		em.close();
@@ -58,7 +59,7 @@ public class TestMultipleId {
 		MultiIdentifierLoadAccess<Book> multi = session.byMultipleIds(Book.class);
 		List<Book> books = multi.withBatchSize(2).multiLoad(1L, 2L, 3L);
 		
-		Assert.assertEquals(3, books.size());
+		Assertions.assertEquals(3, books.size());
 
 		em.getTransaction().commit();
 		em.close();
@@ -78,7 +79,7 @@ public class TestMultipleId {
 		MultiIdentifierLoadAccess<Book> multi = session.byMultipleIds(Book.class);
 		List<Book> books = multi.enableSessionCheck(true).multiLoad(1L, 2L, 3L);
 		
-		Assert.assertEquals(3, books.size());
+		Assertions.assertEquals(3, books.size());
 
 		em.getTransaction().commit();
 		em.close();

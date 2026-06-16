@@ -1,21 +1,28 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedStoredProcedureQuery;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureParameter;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedStoredProcedureQuery;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
+import jakarta.persistence.Version;
 
+/*
+ * On H2 the "calculate" stored procedure is an ALIAS for a static Java method
+ * (org.thoughts.on.java.model.Calculator.calculate) created by create-procedure.sql.
+ * H2 implements such procedures as functions that RETURN their result; it does not
+ * support OUT parameters. The named query therefore only declares the two IN
+ * parameters, and the test marks the call as a function call so Hibernate renders
+ * it as a value-returning function and reads the return value.
+ */
 @Entity
-@NamedStoredProcedureQuery(name = "calculate", 
-	procedureName = "calculate", 
+@NamedStoredProcedureQuery(name = "calculate",
+	procedureName = "calculate",
 	parameters = {	@StoredProcedureParameter(mode = ParameterMode.IN, type = Double.class, name = "x"),
-					@StoredProcedureParameter(mode = ParameterMode.IN, type = Double.class, name = "y"),
-					@StoredProcedureParameter(mode = ParameterMode.OUT, type = Double.class, name = "sum") })
+					@StoredProcedureParameter(mode = ParameterMode.IN, type = Double.class, name = "y") })
 public class Author {
 
 	@Id

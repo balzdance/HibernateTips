@@ -2,34 +2,35 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.ParameterExpression;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.SetJoin;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestCriteriaQuery {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -57,10 +58,10 @@ public class TestCriteriaQuery {
 		query.setParameter(paramFirstName, "Thorben");
 		query.setParameter(paramLastName, "Janssen");
 		List<Book> books = query.getResultList();
-		Assert.assertEquals(1, books.size());
+		Assertions.assertEquals(1, books.size());
 		
 		for (Book b : books) {
-			log.info(b);
+			log.info("{}", b);
 		}
 		
 		em.getTransaction().commit();

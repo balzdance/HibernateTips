@@ -2,26 +2,40 @@ package org.thoughts.on.java.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
 
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
+import org.hibernate.annotations.Synchronize;
 
+/**
+ * Maps a read-only database view. Instead of relying on a database-specific
+ * CREATE VIEW statement, the view is expressed as a Hibernate {@link Subselect}
+ * so the example runs on any database (here: H2). {@link Synchronize} tells
+ * Hibernate which tables back the view so it can flush pending changes before
+ * querying it.
+ */
 @Entity
 @Immutable
+@Subselect("SELECT b.id AS id, b.version AS version, b.title AS title, "
+		+ "b.publishingDate AS publishingDate, "
+		+ "GROUP_CONCAT(a.firstName || ' ' || a.lastName SEPARATOR ', ') AS authors "
+		+ "FROM Book b "
+		+ "JOIN BookAuthor ba ON b.id = ba.bookId "
+		+ "JOIN Author a ON a.id = ba.authorId "
+		+ "GROUP BY b.id, b.version, b.title, b.publishingDate")
+@Synchronize({ "Book", "Author", "BookAuthor" })
 public class BookView {
-	
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
-	
+
 	@Version
 	@Column(name = "version")
 	private int version;
@@ -35,7 +49,7 @@ public class BookView {
 
 	@Column
 	private String authors;
-	
+
 	public Long getId() {
 		return this.id;
 	}

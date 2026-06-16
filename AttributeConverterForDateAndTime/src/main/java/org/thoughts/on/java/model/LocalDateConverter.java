@@ -3,15 +3,16 @@ package org.thoughts.on.java.model;
 import java.sql.Date;
 import java.time.LocalDate;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Converter(autoApply = true)
 public class LocalDateConverter implements AttributeConverter<LocalDate, Date> {
-	
-	Logger log = Logger.getLogger(LocalDateConverter.class.getSimpleName());
+
+	Logger log = LoggerFactory.getLogger(LocalDateConverter.class.getSimpleName());
 
 	@Override
 	public Date convertToDatabaseColumn(LocalDate attribute) {

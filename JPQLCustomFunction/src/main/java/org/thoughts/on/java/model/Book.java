@@ -2,18 +2,18 @@ package org.thoughts.on.java.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
 
 @Entity
 public class Book {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
@@ -25,10 +25,10 @@ public class Book {
 	private String title;
 
 	private Double price;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date publishingDate;
-	
+
 	public Long getId() {
 		return this.id;
 	}
@@ -60,7 +60,7 @@ public class Book {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

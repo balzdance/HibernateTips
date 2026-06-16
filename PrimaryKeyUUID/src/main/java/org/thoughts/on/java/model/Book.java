@@ -5,35 +5,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Version;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 public class Book {
-	
+
 	@Id
-	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(
-		name = "UUID",
-		strategy = "org.hibernate.id.UUIDGenerator",
-		parameters = {
-			@Parameter(
-				name = "uuid_gen_strategy_class",
-				value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
-			)
-		}
-	)
+	@UuidGenerator(style = UuidGenerator.Style.TIME)
 	@Column(name = "id", updatable = false, nullable = false)
 	private UUID id;
 

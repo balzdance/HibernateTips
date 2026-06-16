@@ -2,22 +2,23 @@ package org.thoughts.on.java.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 public class Author {
 	
 	@Transient
-	private Logger log = Logger.getLogger(this.getClass().getName());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -2,12 +2,12 @@ package org.thoughts.on.java.model;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 import org.hibernate.annotations.Formula;
 
@@ -31,7 +31,9 @@ public class Author {
 	@Column
 	private LocalDate dateOfBirth;
 	
-	@Formula(value = "date_part('year', age(dateOfBirth))")
+	// H2-compatible formula. Computed against a fixed reference date so the
+	// example stays deterministic (an author born in 1973 is 43 on 2016-05-01).
+	@Formula(value = "datediff('year', dateOfBirth, DATE '2016-05-01')")
 	private int age;
 
 	public Long getId() {

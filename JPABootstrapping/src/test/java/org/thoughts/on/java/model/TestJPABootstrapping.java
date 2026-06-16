@@ -1,15 +1,16 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestJPABootstrapping {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Test
 	public void bootstrapping() {

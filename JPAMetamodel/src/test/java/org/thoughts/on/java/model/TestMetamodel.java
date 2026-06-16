@@ -2,31 +2,32 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestMetamodel {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -42,13 +43,13 @@ public class TestMetamodel {
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 		Root<Book> root = cq.from(Book.class);
 		cq.multiselect(root.get(Book_.title), root.get(Book_.publishingDate));
-				
+
 		List<Tuple> results = em.createQuery(cq).getResultList();
-		
+
 		for (Tuple r : results) {
 			log.info(r.get(0) + " was published on " + r.get(1));
 		}
-		
+
 		em.getTransaction().commit();
 		em.close();
 	}
