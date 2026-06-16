@@ -1,6 +1,2 @@
-CREATE TABLE author(id bigint NOT NULL, firstname character varying(255), lastname character varying(255), lastupdate timestamp without time zone, version integer NOT NULL, CONSTRAINT author_pkey PRIMARY KEY (id));
-CREATE SEQUENCE hibernate_sequence INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1;
-
-CREATE OR REPLACE FUNCTION sync_lastupdate() RETURNS trigger AS $$ BEGIN NEW.lastupdate := NOW(); RETURN NEW; END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER sync_lastupdate BEFORE INSERT OR UPDATE ON author FOR EACH ROW EXECUTE PROCEDURE sync_lastupdate();
+-- The Author table and its sequence are created by Hibernate from the entity metadata (create-source=metadata-then-script). This script only adds the H2 trigger that keeps the lastupdate column in sync, mirroring the original PostgreSQL sync_lastupdate trigger. The statement is kept on a single line because the JPA script loader splits on newlines.
+CREATE TRIGGER sync_lastupdate BEFORE INSERT, UPDATE ON Author FOR EACH ROW CALL "org.thoughts.on.java.model.SyncLastUpdateTrigger";

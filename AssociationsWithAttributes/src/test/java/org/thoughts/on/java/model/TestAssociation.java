@@ -1,26 +1,27 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestAssociation {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -34,15 +35,15 @@ public class TestAssociation {
 
 		Book b = em.find(Book.class, 1L);
 		Publisher p = em.find(Publisher.class, 1L);
-		
+
 		BookPublisher bp = new BookPublisher();
 		bp.setId(new BookPublisherId());
 		bp.setBook(b);
 		bp.setPublisher(p);
 		bp.setFormat(Format.PAPERBACK);
-		
+
 		em.persist(bp);
-		
+
 		em.getTransaction().commit();
 		em.close();
 	}

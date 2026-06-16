@@ -2,28 +2,29 @@ package org.thoughts.on.java.model;
 
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestUUIDPrimaryKey {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -38,28 +39,28 @@ public class TestUUIDPrimaryKey {
 		Author a = new Author();
 		a.setFirstName("Thorben");
 		a.setLastName("Janssen");
-		
+
 		log.info("Persist new Author entity.");
 		em.persist(a);
-		
+
 		log.info("Call flush");
 		em.flush();
-		
+
 		em.getTransaction().commit();
 		em.close();
-		
+
 		em = emf.createEntityManager();
 		em.getTransaction().begin();
 
 		UUID uuid = a.getId();
-		
+
 		a = em.find(Author.class, uuid);
-		Assert.assertEquals(uuid, a.getId());
-		
+		Assertions.assertEquals(uuid, a.getId());
+
 		em.getTransaction().commit();
 		em.close();
 	}
-	
+
 	@Test
 	public void testUUIDPrimaryKeyV1() {
 		log.info("... testUUIDPrimaryKeyV1 ...");
@@ -69,24 +70,24 @@ public class TestUUIDPrimaryKey {
 
 		Book b = new Book();
 		b.setTitle("Hibernate Tips");
-		
+
 		log.info("Persist new Book entity.");
 		em.persist(b);
-		
+
 		log.info("Call flush");
 		em.flush();
-		
+
 		em.getTransaction().commit();
 		em.close();
-		
+
 		em = emf.createEntityManager();
 		em.getTransaction().begin();
 
 		UUID uuid = b.getId();
-		
+
 		b = em.find(Book.class, uuid);
-		Assert.assertEquals(uuid, b.getId());
-		
+		Assertions.assertEquals(uuid, b.getId());
+
 		em.getTransaction().commit();
 		em.close();
 	}

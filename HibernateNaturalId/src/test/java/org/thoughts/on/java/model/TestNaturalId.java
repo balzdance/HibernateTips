@@ -1,28 +1,29 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestNaturalId {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -37,7 +38,7 @@ public class TestNaturalId {
 
 		Book b = session.byNaturalId(Book.class)
 				.using(Book_.isbn.getName(), "123-4567890123").load();
-		Assert.assertEquals(new Long(1), b.getId());
+		Assertions.assertEquals(Long.valueOf(1), b.getId());
 
 		em.getTransaction().commit();
 		em.close();
@@ -53,7 +54,7 @@ public class TestNaturalId {
 
 		Book b = session.bySimpleNaturalId(Book.class)
 				.load("123-4567890123");
-		Assert.assertEquals(new Long(1), b.getId());
+		Assertions.assertEquals(Long.valueOf(1), b.getId());
 
 		em.getTransaction().commit();
 		em.close();

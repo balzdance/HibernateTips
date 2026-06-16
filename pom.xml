@@ -8,165 +8,177 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.release>21</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<hibernate.version>5.2.8.Final</hibernate.version>
+
+		<hibernate.version>6.6.4.Final</hibernate.version>
+		<jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+		<junit.version>5.11.4</junit.version>
+		<h2.version>2.3.232</h2.version>
+		<slf4j.version>2.0.16</slf4j.version>
+
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+		<build-helper-plugin.version>3.6.0</build-helper-plugin.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- JUnit 5 (Jupiter) -->
 			<dependency>
-				<groupId>org.hibernate</groupId>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${junit.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Hibernate ORM 6 / Jakarta Persistence -->
+			<dependency>
+				<groupId>org.hibernate.orm</groupId>
 				<artifactId>hibernate-core</artifactId>
 				<version>${hibernate.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-entitymanager</artifactId>
-				<version>${hibernate.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
+				<groupId>org.hibernate.orm</groupId>
 				<artifactId>hibernate-jpamodelgen</artifactId>
 				<version>${hibernate.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.1-api</artifactId>
-				<version>1.0.0.Final</version>
+				<groupId>jakarta.persistence</groupId>
+				<artifactId>jakarta.persistence-api</artifactId>
+				<version>${jakarta.persistence.version}</version>
 			</dependency>
+
+			<!-- In-memory database for runnable tests (no external DB / Docker needed) -->
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.11</version>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2.version}</version>
 				<scope>test</scope>
 			</dependency>
+
+			<!-- Logging -->
 			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>9.4.1208</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
-				<scope>test</scope>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.16</version>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-ehcache</artifactId>
-				<version>${hibernate.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.ehcache</groupId>
-				<artifactId>ehcache-core</artifactId>
-				<version>2.6.11</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>target/generated-sources/annotations</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<release>${maven.compiler.release}</release>
+						<!-- Generate the JPA static metamodel (Xyz_ classes) -->
+						<annotationProcessorPaths>
+							<path>
+								<groupId>org.hibernate.orm</groupId>
+								<artifactId>hibernate-jpamodelgen</artifactId>
+								<version>${hibernate.version}</version>
+							</path>
+						</annotationProcessorPaths>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>${build-helper-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
 	<modules>
-		<module>LogSQLStatements</module>
-		<module>QueryCache</module>
-		<module>DatabaseViews</module>
-		<module>JoinFetch</module>
-		<module>CustomSequence</module>
-		<module>OrderRelationships</module>
-		<module>MapNativeQueryToEntity</module>
-		<module>Treat</module>
-		<module>CriteriaTuples</module>
-		<module>CriteriaUpdate</module>
-		<module>Formula</module>
-		<module>QueryTimeout</module>
-		<module>CheckSQLStatementCount</module>
+		<module>2ndLevelCache</module>
 		<module>AccessHibernateApi</module>
-		<module>TransientAttributes</module>
-		<module>QueryPagination</module>
-		<module>MapGeneratedColumns</module>
-		<module>DefineTableAndSchemaName</module>
-		<module>MapNativeQueryToPojo</module>
-		<module>CriteriaConstructor</module>
-		<module>MapOptionalAssociations</module>
-		<module>PrePersistLifecycleEvent</module>
+		<module>AssociationBidirectionalManyToMany</module>
+		<module>AssociationBidirectionalManyToOne</module>
+		<module>AssociationBidirectionalOneToOne</module>
+		<module>AssociationUnidirectionalManyToMany</module>
+		<module>AssociationUnidirectionalManyToOne</module>
+		<module>AssociationUnidirectionalOneToMany</module>
+		<module>AssociationUnidirectionalOneToOne</module>
+		<module>AssociationsWithAttributes</module>
+		<module>AttributeConverterForDateAndTime</module>
 		<module>CascadePersist</module>
+		<module>CheckSQLStatementCount</module>
 		<module>CommentSQLStatements</module>
-		<module>StoredProcedureQuery</module>
-		<module>PrimaryKeyIdentityStrategy</module>
-		<module>MapEnumerations</module>
+		<module>CriteriaConstructor</module>
 		<module>CriteriaCustomFunction</module>
-		<module>JPQLCustomFunction</module>
 		<module>CriteriaDelete</module>
 		<module>CriteriaQuery</module>
-		<module>JPAMetamodel</module>
-		<module>JPQLDelete</module>
-		<module>JPQLUpdate</module>
-		<module>2ndLevelCache</module>
+		<module>CriteriaQueryPagination</module>
 		<module>CriteriaStandardFunction</module>
-		<module>NativeQuery</module>
-		<module>NamedNativeQuery</module>
+		<module>CriteriaTuples</module>
+		<module>CriteriaUpdate</module>
+		<module>CustomEnumerationsMapping</module>
+		<module>CustomSequence</module>
+		<module>DatabaseViews</module>
 		<module>DateAndTime</module>
-		<module>ResultsAsStreams</module>
-		<module>JpqlStandardFunction</module>
-		<module>JPQLAdHocQuery</module>
-		<module>JPQLNamedQuery</module>
-		<module>JPQLConstructorExpression</module>
-		<module>JPQLScalarValues</module>
-		<module>MapBasicAttributes</module>
-		<module>MapUtilDate</module>
-		<module>InheritanceTablePerClass</module>
+		<module>DefineTableAndSchemaName</module>
+		<module>DerivedPrimaryKey</module>
+		<module>EntityGraph</module>
+		<module>Formula</module>
+		<module>HibernateBootstrapping</module>
+		<module>HibernateJoinUnassociatedEntities</module>
+		<module>HibernateMultipleId</module>
+		<module>HibernateNaturalId</module>
 		<module>InheritanceJoined</module>
 		<module>InheritanceMappedSuperclass</module>
 		<module>InheritanceSingleTable</module>
-		<module>HibernateJoinUnassociatedEntities</module>
-		<module>CustomEnumerationsMapping</module>
-		<module>AttributeConverterForDateAndTime</module>
-		<module>HibernateNaturalId</module>
-		<module>HibernateMultipleId</module>
-		<module>DerivedPrimaryKey</module>
-		<module>AssociationsWithAttributes</module>
-		<module>AssociationBidirectionalManyToOne</module>
-		<module>AssociationUnidirectionalManyToOne</module>
-		<module>AssociationUnidirectionalOneToMany</module>
-		<module>AssociationBidirectionalManyToMany</module>
-		<module>AssociationUnidirectionalManyToMany</module>
-		<module>AssociationBidirectionalOneToOne</module>
-		<module>AssociationUnidirectionalOneToOne</module>
-		<module>PrimaryKeyTableStrategy</module>
-		<module>PrimaryKey</module>
-		<module>PrimaryKeyUUID</module>
-		<module>CriteriaQueryPagination</module>
-		<module>HibernateBootstrapping</module>
-		<module>SpringBootBootstrapping</module>
+		<module>InheritanceTablePerClass</module>
 		<module>JPABootstrapping</module>
+		<module>JPAMetamodel</module>
+		<module>JPQLAdHocQuery</module>
+		<module>JPQLConstructorExpression</module>
+		<module>JPQLCustomFunction</module>
+		<module>JPQLDelete</module>
+		<module>JPQLNamedQuery</module>
+		<module>JPQLScalarValues</module>
+		<module>JPQLUpdate</module>
+		<module>JoinFetch</module>
+		<module>JpqlStandardFunction</module>
+		<module>LogSQLStatements</module>
+		<module>MapBasicAttributes</module>
+		<module>MapEnumerations</module>
+		<module>MapGeneratedColumns</module>
+		<module>MapNativeQueryToEntity</module>
+		<module>MapNativeQueryToPojo</module>
+		<module>MapOptionalAssociations</module>
+		<module>MapUtilDate</module>
+		<module>NamedNativeQuery</module>
+		<module>NativeQuery</module>
+		<module>OrderRelationships</module>
+		<module>PrePersistLifecycleEvent</module>
+		<module>PrimaryKey</module>
+		<module>PrimaryKeyIdentityStrategy</module>
+		<module>PrimaryKeyTableStrategy</module>
+		<module>PrimaryKeyUUID</module>
+		<module>QueryCache</module>
+		<module>QueryPagination</module>
+		<module>QueryTimeout</module>
+		<module>ResultsAsStreams</module>
+		<module>SpringBootBootstrapping</module>
+		<module>StoredProcedureQuery</module>
+		<module>TransientAttributes</module>
+		<module>Treat</module>
 	</modules>
 </project>

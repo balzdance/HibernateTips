@@ -2,31 +2,32 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestQueryPagination {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
@@ -49,7 +50,7 @@ public class TestQueryPagination {
 									.setMaxResults(5)
 									.setFirstResult(0)
 									.getResultList();
-		Assert.assertEquals("Expected a list of 5 books.", 5, books.size());
+		Assertions.assertEquals(5, books.size(), "Expected a list of 5 books.");
 		books.forEach(b -> log.info(b.getTitle()));
 
 		em.getTransaction().commit();
@@ -74,7 +75,7 @@ public class TestQueryPagination {
 									.setMaxResults(5)
 									.setFirstResult(5)
 									.getResultList();
-		Assert.assertEquals("Expected a list of 5 books.", 5, books.size());
+		Assertions.assertEquals(5, books.size(), "Expected a list of 5 books.");
 		books.forEach(b -> log.info(b.getTitle()));
 
 		em.getTransaction().commit();
