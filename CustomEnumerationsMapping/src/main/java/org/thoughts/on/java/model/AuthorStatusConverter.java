@@ -1,14 +1,15 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Converter(autoApply = true)
 public class AuthorStatusConverter implements AttributeConverter<AuthorStatus, String> {
-	
-	Logger log = Logger.getLogger(AuthorStatusConverter.class.getSimpleName());
+
+	Logger log = LoggerFactory.getLogger(AuthorStatusConverter.class);
 	
 	@Override
 	public String convertToDatabaseColumn(AuthorStatus status) {

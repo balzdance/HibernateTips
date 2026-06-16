@@ -1,54 +1,62 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.ParameterMode;
-import javax.persistence.Persistence;
-import javax.persistence.StoredProcedureQuery;
+import java.sql.Types;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.StoredProcedureQuery;
+
+import org.hibernate.procedure.ProcedureCall;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestStoredProcedureQuery {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
-	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	private EntityManagerFactory emf;
 
-    @Before
-    public void init() {
-        emf = Persistence.createEntityManagerFactory("my-persistence-unit");
-    }
+	@BeforeEach
+	public void init() {
+		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
+	}
 
-    @After
-    public void close() {
-        emf.close();
-    }
-	
+	@AfterEach
+	public void close() {
+		emf.close();
+	}
+
 	@Test
 	public void calculate() {
 		log.info("... calculate ...");
 		EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        
-		// define the stored procedure
+		em.getTransaction().begin();
+
+		// define the stored procedure (an H2 ALIAS to a static Java method)
 		StoredProcedureQuery query = em.createStoredProcedureQuery("calculate");
+		// On H2 a stored procedure is a function ALIAS that returns its result
+		// instead of using an OUT parameter (H2 does not support OUT params).
+		// Mark the call as a function so Hibernate renders "{ ? = call calculate(?, ?) }".
+		query.unwrap(ProcedureCall.class).markAsFunctionCall(Types.DOUBLE);
 		query.registerStoredProcedureParameter("x", Double.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter("y", Double.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter("sum", Double.class, ParameterMode.OUT);
-		
+
 		// set input parameter
 		query.setParameter("x", 1.23d);
 		query.setParameter("y", 4d);
-		
-		// call the stored procedure and get the result
-		query.execute();
-		Double sum = (Double) query.getOutputParameterValue("sum");
-		log.info("Calculation result: 1.23 + 4 = " + sum);
 
-        em.getTransaction().commit();
-        em.close();
+		// call the stored procedure and get the result (the function return value)
+		Double sum = (Double) query.getSingleResult();
+		log.info("Calculation result: 1.23 + 4 = " + sum);
+		Assertions.assertEquals(Double.valueOf(5.23d), sum);
+
+		em.getTransaction().commit();
+		em.close();
 	}
 }

@@ -44,10 +44,29 @@ the console (`hibernate.show_sql` in each module's `persistence.xml`).
 
 ## Migration progress
 
-Modules are migrated incrementally; the parent `pom.xml` `<modules>` list contains the
-ones already ported. Migrated so far:
+**All 73 modules have been migrated** to the modern stack and are registered in the
+parent `pom.xml`. A full reactor build (`mvn test`) is green — 95 tests pass against
+in-memory H2, no external database required.
 
-- [x] `DateAndTime`
+Most modules were a mechanical application of the recipe below. A handful needed real
+Hibernate 6 / H2 adaptations worth knowing about:
+
+| Module(s) | Adaptation |
+| --- | --- |
+| `CriteriaCustomFunction`, `JPQLCustomFunction` | Custom SQL function registration moved from the removed `MetadataBuilder.applySqlFunction` to the Hibernate 6 `FunctionContributor` SPI (registered via `META-INF/services`). |
+| `2ndLevelCache`, `QueryCache` | Ehcache 2 integration is gone; switched to JCache + Ehcache 3.10 (`jakarta` classifier), region factory `jcache`. Ehcache pulls a legacy javax JAXB range that must be excluded (Hibernate already provides Jakarta JAXB). |
+| `MapGeneratedColumns` | PostgreSQL trigger replaced with an H2 `org.h2.api.Trigger`; `@Generated(GenerationTime)` updated to the Hibernate 6 `@Generated(event = …)` form. |
+| `StoredProcedureQuery` | PostgreSQL PL/pgSQL function (with `OUT` param) recreated as an H2 `CREATE ALIAS` to a static Java method, invoked via Hibernate's `ProcedureCall.markAsFunctionCall`. |
+| `DatabaseViews` | PostgreSQL `CREATE VIEW` replaced with a portable `@Subselect` + `@Synchronize` (H2 `GROUP_CONCAT` instead of `string_agg`). |
+| `Formula` | `@Formula` rewritten from PostgreSQL `age()`/`date_part` to H2 `datediff` against a fixed reference date (kept deterministic). |
+| `PrimaryKeyUUID` | Deprecated `@GenericGenerator(UUIDGenerator)` replaced with Hibernate 6 `@UuidGenerator`. |
+| `SpringBootBootstrapping` | Upgraded to Spring Boot 3.3 (Jakarta, Hibernate 6), H2 datasource, JUnit 5 test slice. |
+
+Recurring mechanical fixes applied throughout: `javax.persistence.*` → `jakarta.persistence.*`,
+JUnit 4 → 5, log4j → SLF4J (including `log.info(entity)` → `log.info("{}", entity)` since
+SLF4J needs a `String` first arg), `new Long(x)` → `Long.valueOf(x)` (the boxing
+constructors are gone in Java 21), and renaming `javax.persistence.*` properties (e.g.
+`sql-load-script-source`, query hints) to `jakarta.persistence.*`.
 
 ## Migration recipe (per module)
 

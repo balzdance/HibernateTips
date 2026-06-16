@@ -1,32 +1,34 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
 import org.hibernate.LazyInitializationException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestJoinFetch {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
 	}
 
-	@Test(expected = LazyInitializationException.class)
+	@Test
 	public void selectFromWithoutJoinFetch() {
 		log.info("... selectFromWithoutJoinFetch ...");
 
@@ -34,19 +36,21 @@ public class TestJoinFetch {
 		em.getTransaction().begin();
 
 		Author a = em.createQuery("SELECT a FROM Author a WHERE id = 1", Author.class).getSingleResult();
-		
+
 		log.info("Commit transaction and close Session");
 		em.getTransaction().commit();
 		em.close();
-		
-		try {
-			log.info(a.getFirstName()+" "+a.getLastName()+" wrote "+a.getBooks().size()+" books.");
-		} catch (Exception e) {
-			log.error(e);
-			throw e;
-		}
+
+		Assertions.assertThrows(LazyInitializationException.class, () -> {
+			try {
+				log.info(a.getFirstName()+" "+a.getLastName()+" wrote "+a.getBooks().size()+" books.");
+			} catch (Exception e) {
+				log.error("Error", e);
+				throw e;
+			}
+		});
 	}
-	
+
 	@Test
 	public void selectFromWithJoinFetch() {
 		log.info("... selectFromWithJoinFetch ...");
@@ -55,11 +59,11 @@ public class TestJoinFetch {
 		em.getTransaction().begin();
 
 		Author a = em.createQuery("SELECT a FROM Author a JOIN FETCH a.books WHERE a.id = 1", Author.class).getSingleResult();
-		
+
 		log.info("Commit transaction and close Session");
 		em.getTransaction().commit();
 		em.close();
-		
+
 		log.info(a.getFirstName()+" "+a.getLastName()+" wrote "+a.getBooks().size()+" books.");
 	}
 }

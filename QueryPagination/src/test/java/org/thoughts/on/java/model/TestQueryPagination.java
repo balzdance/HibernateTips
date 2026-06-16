@@ -2,30 +2,45 @@ package org.thoughts.on.java.model;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestQueryPagination {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private EntityManagerFactory emf;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		emf = Persistence.createEntityManagerFactory("my-persistence-unit");
+		seedAuthors();
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		emf.close();
+	}
+
+	private void seedAuthors() {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		for (int i = 1; i <= 10; i++) {
+			Author a = new Author();
+			a.setFirstName("FirstName" + i);
+			a.setLastName("LastName" + i);
+			em.persist(a);
+		}
+		em.getTransaction().commit();
+		em.close();
 	}
 
 	@Test
@@ -39,7 +54,7 @@ public class TestQueryPagination {
 									.setMaxResults(5)
 									.setFirstResult(0)
 									.getResultList();
-		Assert.assertEquals("Expected a list of 5 authors.", 5, authors.size());
+		Assertions.assertEquals(5, authors.size(), "Expected a list of 5 authors.");
 		authors.forEach(a -> log.info(a.getFirstName() + " " + a.getLastName()));
 
 		em.getTransaction().commit();
@@ -57,7 +72,7 @@ public class TestQueryPagination {
 									.setMaxResults(5)
 									.setFirstResult(5)
 									.getResultList();
-		Assert.assertEquals("Expected a list of 5 authors.", 5, authors.size());
+		Assertions.assertEquals(5, authors.size(), "Expected a list of 5 authors.");
 		authors.forEach(a -> log.info(a.getFirstName() + " " + a.getLastName()));
 
 		em.getTransaction().commit();

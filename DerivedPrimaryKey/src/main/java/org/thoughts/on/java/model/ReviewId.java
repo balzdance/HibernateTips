@@ -3,7 +3,7 @@ package org.thoughts.on.java.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class ReviewId implements Serializable {

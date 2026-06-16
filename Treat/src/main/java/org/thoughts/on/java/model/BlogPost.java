@@ -1,6 +1,6 @@
 package org.thoughts.on.java.model;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity(name = "BlogPost")
 public class BlogPost extends Publication {

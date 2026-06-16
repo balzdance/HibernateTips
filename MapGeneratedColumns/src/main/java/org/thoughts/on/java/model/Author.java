@@ -2,15 +2,15 @@ package org.thoughts.on.java.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
+import org.hibernate.generator.EventType;
 
 @Entity
 public class Author {
@@ -27,7 +27,7 @@ public class Author {
 
 	private String lastName;
 	
-	@Generated(GenerationTime.ALWAYS)
+	@Generated(event = { EventType.INSERT, EventType.UPDATE })
 	private LocalDateTime lastUpdate;
 
 	public Long getId() {
