@@ -42,6 +42,135 @@ The test bootstraps an `EntityManagerFactory` against an in-memory H2 database
 (`drop-and-create` schema generation), so it is fully self-contained. SQL is logged to
 the console (`hibernate.show_sql` in each module's `persistence.xml`).
 
+## Examples by topic
+
+### Primary keys & ID generation
+
+| Module | Topic |
+| --- | --- |
+| `PrimaryKey` | Basic primary key mapping |
+| `PrimaryKeyIdentityStrategy` | `GenerationType.IDENTITY` |
+| `PrimaryKeyTableStrategy` | `GenerationType.TABLE` |
+| `PrimaryKeyUUID` | UUID primary keys |
+| `CustomSequence` | Custom database sequence |
+| `HibernateNaturalId` | Natural IDs |
+| `HibernateMultipleId` | Composite / multiple IDs |
+| `DerivedPrimaryKey` | Derived primary keys (`@MapsId`) |
+
+### Associations & relationships
+
+| Module | Topic |
+| --- | --- |
+| `AssociationUnidirectionalOneToOne` | Unidirectional one-to-one |
+| `AssociationBidirectionalOneToOne` | Bidirectional one-to-one |
+| `AssociationUnidirectionalOneToMany` | Unidirectional one-to-many |
+| `AssociationUnidirectionalManyToOne` | Unidirectional many-to-one |
+| `AssociationBidirectionalManyToOne` | Bidirectional many-to-one |
+| `AssociationUnidirectionalManyToMany` | Unidirectional many-to-many |
+| `AssociationBidirectionalManyToMany` | Bidirectional many-to-many |
+| `AssociationsWithAttributes` | Association tables with extra attributes |
+| `MapOptionalAssociations` | Optional associations |
+| `OrderRelationships` | Ordering related entities |
+| `JoinFetch` | `JOIN FETCH` to avoid lazy-loading issues |
+| `HibernateJoinUnassociatedEntities` | Joining unassociated entities |
+
+### Inheritance
+
+| Module | Topic |
+| --- | --- |
+| `InheritanceSingleTable` | `SINGLE_TABLE` strategy |
+| `InheritanceJoined` | `JOINED` strategy |
+| `InheritanceTablePerClass` | `TABLE_PER_CLASS` strategy |
+| `InheritanceMappedSuperclass` | `@MappedSuperclass` |
+| `Treat` | `TREAT` operator for polymorphic queries |
+
+### Mapping basics & attributes
+
+| Module | Topic |
+| --- | --- |
+| `MapBasicAttributes` | Basic attribute mapping |
+| `MapEnumerations` | Mapping enums |
+| `CustomEnumerationsMapping` | Custom enum mapping |
+| `MapGeneratedColumns` | Database-generated columns |
+| `TransientAttributes` | Transient attributes |
+| `Formula` | `@Formula` calculated values |
+| `DateAndTime` | Mapping `java.time` types |
+| `MapUtilDate` | Mapping `java.util.Date` |
+| `AttributeConverterForDateAndTime` | `AttributeConverter` for date/time |
+| `DefineTableAndSchemaName` | Defining table & schema names |
+| `DatabaseViews` | Mapping database views |
+
+### JPQL
+
+| Module | Topic |
+| --- | --- |
+| `JPQLAdHocQuery` | Ad-hoc JPQL queries |
+| `JPQLNamedQuery` | Named queries |
+| `JPQLConstructorExpression` | Constructor expressions / DTO projection |
+| `JPQLScalarValues` | Selecting scalar values |
+| `JPQLCustomFunction` | Custom functions in JPQL |
+| `JpqlStandardFunction` | Standard JPQL functions |
+| `JPQLDelete` | Bulk delete |
+| `JPQLUpdate` | Bulk update |
+
+### Criteria API
+
+| Module | Topic |
+| --- | --- |
+| `CriteriaQuery` | Basic Criteria query |
+| `CriteriaConstructor` | Constructor expressions |
+| `CriteriaTuples` | `Tuple` result type |
+| `CriteriaCustomFunction` | Custom functions |
+| `CriteriaStandardFunction` | Standard functions |
+| `CriteriaDelete` | Bulk delete |
+| `CriteriaUpdate` | Bulk update |
+| `CriteriaQueryPagination` | Pagination with the Criteria API |
+| `JPAMetamodel` | Using the JPA metamodel |
+
+### Native queries & stored procedures
+
+| Module | Topic |
+| --- | --- |
+| `NativeQuery` | Native SQL queries |
+| `NamedNativeQuery` | Named native queries |
+| `MapNativeQueryToEntity` | Mapping native query results to entities |
+| `MapNativeQueryToPojo` | Mapping native query results to POJOs |
+| `StoredProcedureQuery` | Calling stored procedures |
+
+### Query features & performance
+
+| Module | Topic |
+| --- | --- |
+| `QueryPagination` | Pagination |
+| `QueryTimeout` | Query timeouts |
+| `QueryCache` | Query cache |
+| `2ndLevelCache` | Second-level cache |
+| `ResultsAsStreams` | Returning results as a `Stream` |
+
+### SQL logging & debugging
+
+| Module | Topic |
+| --- | --- |
+| `LogSQLStatements` | Logging SQL statements |
+| `CommentSQLStatements` | Adding comments to SQL statements |
+| `CheckSQLStatementCount` | Asserting the number of executed statements |
+
+### Lifecycle, cascading & the Hibernate API
+
+| Module | Topic |
+| --- | --- |
+| `PrePersistLifecycleEvent` | `@PrePersist` lifecycle callbacks |
+| `CascadePersist` | Cascading persist operations |
+| `AccessHibernateApi` | Accessing the Hibernate API from JPA |
+
+### Bootstrapping
+
+| Module | Topic |
+| --- | --- |
+| `JPABootstrapping` | Bootstrapping with plain JPA |
+| `HibernateBootstrapping` | Bootstrapping the native Hibernate API |
+| `SpringBootBootstrapping` | Bootstrapping with Spring Boot |
+
 ## Migration progress
 
 **All 73 modules have been migrated** to the modern stack and are registered in the
